@@ -4,8 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wall of Edge™ — The Sharper ONE™</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Bebas Neue';
+    src: url('/fonts/bebas-neue-v10-latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/barlow-condensed-v27-latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/barlow-condensed-v27-latin-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/barlow-condensed-v27-latin-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow';
+    src: url('/fonts/barlow-v12-latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow';
+    src: url('/fonts/barlow-v12-latin-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Barlow';
+    src: url('/fonts/barlow-v12-latin-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     --purple: #3C2469;
     --purple-mid: #5a3a8e;
@@ -57,11 +106,8 @@
     border-radius: 50%;
     background: var(--orange);
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-    font-size: 14px;
-    color: white;
-    letter-spacing: 0.02em;
     flex-shrink: 0;
+    overflow: hidden;
   }
   .nav-title {
     font-family: var(--font-ui);
@@ -840,7 +886,13 @@
 <!-- NAV -->
 <nav class="nav">
   <a class="nav-brand" href="https://sharper.one">
-    <div class="nav-orb">1</div>
+    <div class="nav-orb">
+      <svg width="22" height="22" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="14" r="13" stroke="white" stroke-width="1.5" stroke-opacity="0.4"/>
+        <path d="M9 8h2.2l4.6 8.2V8H18v12h-2.2L11.2 11.8V20H9V8z" fill="white"/>
+        <path d="M7 21.5 Q14 24 21 21.5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
+      </svg>
+    </div>
     <span class="nav-title">The Sharper ONE™</span>
   </a>
   <div class="nav-actions">
