@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wall of Edge™ — BOSS™ Entry Seal</title>
+<style>
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #2a1a4a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 2.5rem; font-weight: 900; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+  p  { color: rgba(255,255,255,0.5); margin-bottom: 2rem; line-height: 1.6; }
+  .entry-preview {
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.2);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  .entry-preview blockquote {
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+    border-left: 3px solid #ff5500;
+    padding-left: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .entry-meta { font-size: 0.78rem; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; }
+  .btn {
+    background: #ff5500;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .btn:hover { background: #cc4400; }
+  .status { font-size: 0.85rem; color: rgba(255,255,255,0.4); min-height: 1.2em; }
+  .status.ok { color: #5DCAA5; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔱 BOSS™</h1>
+  <p>Sealing the first Wall of Edge™ entry — the food processor moment. This injects directly into localStorage on this domain.</p>
+
+  <div class="entry-preview">
+    <blockquote>
+      "It used to just tear things into chunks. Now it made something smooth — more liquid than chunky. I didn't know it could do that. I've had this thing for years."
+    </blockquote>
+    <div class="entry-meta">
+      BOSS™ &nbsp;·&nbsp; Food Processor Blade Set &nbsp;·&nbsp; Homeowner &nbsp;·&nbsp; Featured
+    </div>
+  </div>
+
+  <button class="btn" onclick="sealEntry()">SEAL THE ENTRY 🔱</button>
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+function sealEntry() {
+  const WOE_KEY = 'woe_entries_v1';
+  const boss = {
+    id: 'woe_boss_001',
+    name: 'BOSS™',
+    segment: 'Homeowner',
+    blade: 'Food Processor Blade Set',
+    quote: "It used to just tear things into chunks. Now it made something smooth — more liquid than chunky. I didn't know it could do that. I've had this thing for years.",
+    date: new Date().toISOString().split('T')[0],
+    notes: 'First food processor blade set serviced. Significant result — client reported texture transformation from chunky to near-liquid. Equipment: Bucktool 2x42 + Work Sharp. High social proof value. BOSS™ testimonial.',
+    featured: true,
+    isPublic: true,
+    before: null,
+    after: null,
+    source: 'operator-entry'
+  };
+
+  try {
+    const raw = localStorage.getItem(WOE_KEY);
+    const entries = raw ? JSON.parse(raw) : [];
+    const exists = entries.find(e => e.id === boss.id);
+    if (exists) {
+      document.getElementById('status').textContent = 'Already sealed — entry exists.';
+      document.getElementById('status').className = 'status ok';
+      return;
+    }
+    entries.unshift(boss);
+    localStorage.setItem(WOE_KEY, JSON.stringify(entries));
+    document.getElementById('status').textContent = '✓ Sealed. Entry is live on the Wall.';
+    document.getElementById('status').className = 'status ok';
+  } catch(e) {
+    document.getElementById('status').textContent = 'Error: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>

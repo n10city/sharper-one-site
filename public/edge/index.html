@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Share Your Edge — The Sharper ONE™</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #3C2469;
+    --purple-mid: #5a3a8e;
+    --purple-deep: #2a1a4a;
+    --orange: #ff5500;
+    --orange-dim: #cc4400;
+    --cream: #faf7f2;
+    --ink: #1a1018;
+    --ink-mid: #3d2e4a;
+    --muted: #8a7a96;
+    --border: rgba(60,36,105,0.13);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-ui: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--purple-deep);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+  }
+
+  /* ── LAYOUT ── */
+  .page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 4rem;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    width: 100%;
+    text-align: center;
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  }
+  .orb {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: white;
+    margin: 0 auto 1.25rem;
+    letter-spacing: 0.02em;
+    animation: orbPulse 3s ease-in-out infinite;
+  }
+  @keyframes orbPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,85,0,0.3); }
+    50% { box-shadow: 0 0 0 12px rgba(255,85,0,0); }
+  }
+  .hero-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 0.75rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 14vw, 5.5rem);
+    line-height: 0.88;
+    letter-spacing: 0.03em;
+    color: white;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+  .hero-title .accent { color: var(--orange); }
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.55);
+    max-width: 360px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.25rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.45s ease forwards;
+  }
+  .card-inner {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .card-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-section:last-child { border-bottom: none; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,85,0,0.2);
+  }
+
+  /* ── BLADE DISPLAY ── */
+  .blade-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.18);
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+  }
+  .blade-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--orange);
+    flex-shrink: 0;
+    animation: orbPulse 2s ease-in-out infinite;
+  }
+  .blade-text {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.85);
+  }
+  .blade-text span {
+    color: var(--orange);
+    font-style: normal;
+  }
+
+  /* ── TEXTAREA ── */
+  .reaction-label {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .reaction-field {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-style: italic;
+    color: white;
+    resize: none;
+    min-height: 110px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+  .reaction-field::placeholder {
+    color: rgba(255,255,255,0.2);
+    font-style: italic;
+  }
+  .reaction-field:focus {
+    border-color: rgba(255,85,0,0.5);
+    background: rgba(255,255,255,0.07);
+  }
+  .char-count {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.2);
+    text-align: right;
+    margin-top: 5px;
+    transition: color 0.2s;
+  }
+  .char-count.active { color: rgba(255,85,0,0.6); }
+
+  /* ── PHOTO UPLOAD ── */
+  .photo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .photo-zone {
+    border: 1.5px dashed rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    background: rgba(255,255,255,0.02);
+    overflow: hidden;
+  }
+  .photo-zone:hover {
+    border-color: rgba(255,85,0,0.4);
+    background: rgba(255,85,0,0.04);
+  }
+  .photo-zone input {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .photo-zone-preview {
+    width: 100%; height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: none;
+  }
+  .photo-zone-preview.show { display: block; }
+  .photo-zone-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    opacity: 0.3;
+  }
+  .photo-zone-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 4px;
+  }
+  .photo-zone.before .photo-zone-label { color: rgba(255,255,255,0.4); }
+  .photo-zone.after .photo-zone-label  { color: var(--orange); }
+  .photo-zone.after { border-color: rgba(255,85,0,0.25); }
+
+  /* ── CONSENT ── */
+  .consent-label {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 1rem;
+    line-height: 1.55;
+  }
+  .consent-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .consent-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .consent-option:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.15);
+  }
+  .consent-option.selected {
+    background: rgba(255,85,0,0.1);
+    border-color: rgba(255,85,0,0.4);
+  }
+  .consent-option input[type=radio] { display: none; }
+  .consent-radio {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .consent-option.selected .consent-radio {
+    border-color: var(--orange);
+    background: var(--orange);
+  }
+  .consent-option.selected .consent-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: white;
+  }
+  .consent-text { flex: 1; }
+  .consent-title {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+  .consent-desc {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 1px;
+    line-height: 1.4;
+  }
+
+  /* ── NAME FIELD (conditional) ── */
+  .name-field-wrap {
+    margin-top: 10px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+  }
+  .name-field-wrap.open {
+    max-height: 80px;
+    opacity: 1;
+    margin-top: 10px;
+  }
+  .name-field {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .name-field::placeholder { color: rgba(255,255,255,0.2); }
+  .name-field:focus { border-color: rgba(255,85,0,0.5); }
+
+  /* ── SUBMIT BUTTON ── */
+  .submit-section {
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--orange);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: 0.08em;
+    color: white;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .submit-btn:hover { background: var(--orange-dim); }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .submit-legal {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.2);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── THANK YOU STATE ── */
+  .thankyou {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  .thankyou.show { display: block; }
+  .thankyou-orb {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.5rem;
+    animation: orbPulse 2s ease-in-out infinite;
+  }
+  .thankyou-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    letter-spacing: 0.06em;
+    color: white;
+    margin-bottom: 0.75rem;
+    line-height: 0.95;
+  }
+  .thankyou-sub {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto 2rem;
+  }
+  .thankyou-tag {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    padding: 8px 18px;
+    border: 1px solid rgba(255,85,0,0.3);
+    border-radius: 100px;
+    display: inline-block;
+  }
+
+  /* ── FOOTER BRAND ── */
+  .brand-footer {
+    margin-top: 3rem;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s ease forwards;
+  }
+  .brand-footer p {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+  .brand-footer a {
+    color: rgba(255,85,0,0.5);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .brand-footer a:hover { color: var(--orange); }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="orb">1</div>
+    <p class="hero-eyebrow">The Sharper ONE™ · Parker, Hood & Johnson Counties</p>
+    <h1 class="hero-title">YOUR<br><span class="accent">EDGE.</span><br>YOUR WORDS.</h1>
+    <p class="hero-sub">You felt something when that blade came back. We'd be honored to put it on the Wall.</p>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="card" id="formCard">
+    <div class="card-inner">
+
+      <!-- What we sharpened -->
+      <div class="card-section">
+        <div class="section-label">What we sharpened</div>
+        <div class="blade-info" id="bladeInfo">
+          <div class="blade-dot"></div>
+          <div class="blade-text" id="bladeText">
+            <span id="bladeDisplay">Your blade</span> — restored today
+          </div>
+        </div>
+        <label class="reaction-label" for="bladeInput">Not right? Tell us what it was</label>
+        <input
+          class="name-field"
+          id="bladeInput"
+          type="text"
+          placeholder="e.g. Chef's knife, straight razor, garden shears…"
+          style="margin-top:0;"
+        >
+      </div>
+
+      <!-- The reaction -->
+      <div class="card-section">
+        <div class="section-label">Your reaction</div>
+        <label class="reaction-label" for="reactionField">In your own words — what changed?</label>
+        <textarea
+          class="reaction-field"
+          id="reactionField"
+          maxlength="400"
+          placeholder="It used to struggle, now it just… glides. That kind of thing."
+          oninput="updateCharCount(this)"
+        ></textarea>
+        <div class="char-count" id="charCount">0 / 400</div>
+      </div>
+
+      <!-- Photos -->
+      <div class="card-section">
+        <div class="section-label">Before / After (optional)</div>
+        <div class="photo-row">
+          <div class="photo-zone before">
+            <input type="file" accept="image/*" onchange="handlePhoto('before', this)">
+            <img class="photo-zone-preview" id="beforePreview" src="" alt="">
+            <div class="photo-zone-icon" id="beforeIcon">📷</div>
+            <span class="photo-zone-label">Before</span>
+          </div>
+          <div class="photo-zone after">
+            <input type="file" accept="image/*" onchange="handlePhoto('after', this)">
+            <img class="photo-zone-preview" id="afterPreview" src="" alt="">
+            <div class="photo-zone-icon" id="afterIcon">✨</div>
+            <span class="photo-zone-label">After</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consent -->
+      <div class="card-section">
+        <div class="section-label">How you'd like to appear</div>
+        <p class="consent-label">Your words, your call. We only share what you're comfortable with.</p>
+        <div class="consent-options" id="consentOptions">
+          <label class="consent-option" onclick="selectConsent('named', this)">
+            <input type="radio" name="consent" value="named">
+            <div class="consent-radio"></div>
+            <div class="consent-text">
+              <div class="consent-title">Use my name</div>
+              <div class="consent-desc">First name shown on the Wall of Edge™</div>
+            </div>
+          </label>
+          <label class="consent-option selected" onclick="selectConsent('anonymous', this)">
+            <input type="radio" name="consent" value="anonymous" checked>
+            <div class="consent-radio"></div>
+            <div class="consent-text">
+              <div class="consent-title">Keep me anonymous</div>
+              <div class="consent-desc">Quote published, no name attached</div>
+            </div>
+          </label>
+          <label class="consent-option" onclick="selectConsent('none', this)">
+            <input type="radio" name="consent" value="none">
+            <div class="consent-radio"></div>
+            <div class="consent-text">
+              <div class="consent-title">Just for the operator</div>
+              <div class="consent-desc">Internal ops notes only, never public</div>
+            </div>
+          </label>
+        </div>
+        <!-- Name field, slides open when "named" is selected -->
+        <div class="name-field-wrap" id="nameFieldWrap">
+          <input
+            class="name-field"
+            id="nameField"
+            type="text"
+            placeholder="First name or how you'd like to be known"
+          >
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-section">
+        <button class="submit-btn" id="submitBtn" onclick="submitEntry()">
+          <span id="submitSpinner" class="spinner"></span>
+          SEAL THE EDGE 🔱
+        </button>
+        <p class="submit-legal">By submitting, you confirm these are your own words and consent to their use by The Sharper ONE™.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="card thankyou" id="thankyou">
+    <div class="thankyou-orb">🔱</div>
+    <h2 class="thankyou-title">ON THE<br>WALL.</h2>
+    <p class="thankyou-sub">Your edge is sealed. It'll inspire the next person who thinks their knife is just "good enough."</p>
+    <span class="thankyou-tag">Wall of Edge™ · The Sharper ONE™</span>
+  </div>
+
+  <!-- BRAND FOOTER -->
+  <div class="brand-footer">
+    <p>
+      <a href="https://sharper.one">sharper.one</a> &nbsp;·&nbsp;
+      877.926.9326 &nbsp;·&nbsp;
+      Parker, Hood & Johnson Counties
+    </p>
+    <p style="margin-top:6px;">Pop-ups: Sundays & Wednesdays · Front of the Farm</p>
+  </div>
+
+</div>
+
+<script>
+  const WOE_KEY = 'woe_entries_v1';
+  let consentMode = 'anonymous';
+  let photoData = { before: null, after: null };
+
+  // Pre-fill blade from URL param ?blade=...
+  const urlBlade = new URLSearchParams(location.search).get('blade');
+  if (urlBlade) {
+    document.getElementById('bladeDisplay').textContent = decodeURIComponent(urlBlade);
+    document.getElementById('bladeInput').value = decodeURIComponent(urlBlade);
+  }
+
+  function updateCharCount(el) {
+    const n = el.value.length;
+    const el2 = document.getElementById('charCount');
+    el2.textContent = n + ' / 400';
+    el2.classList.toggle('active', n > 0);
+  }
+
+  function selectConsent(mode, label) {
+    consentMode = mode;
+    document.querySelectorAll('.consent-option').forEach(o => o.classList.remove('selected'));
+    label.classList.add('selected');
+    const wrap = document.getElementById('nameFieldWrap');
+    if (mode === 'named') {
+      wrap.classList.add('open');
+    } else {
+      wrap.classList.remove('open');
+    }
+  }
+
+  function handlePhoto(type, input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      photoData[type] = ev.target.result;
+      const preview = document.getElementById(type + 'Preview');
+      const icon    = document.getElementById(type + 'Icon');
+      preview.src = ev.target.result;
+      preview.classList.add('show');
+      icon.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  function submitEntry() {
+    const reaction = document.getElementById('reactionField').value.trim();
+    if (!reaction) {
+      document.getElementById('reactionField').focus();
+      document.getElementById('reactionField').style.borderColor = 'rgba(255,85,0,0.7)';
+      return;
+    }
+    const bladeVal = document.getElementById('bladeInput').value.trim()
+      || document.getElementById('bladeDisplay').textContent
+      || 'Blade';
+    const nameVal = consentMode === 'named'
+      ? (document.getElementById('nameField').value.trim() || 'Customer')
+      : (consentMode === 'anonymous' ? 'Anonymous' : 'Internal Only');
+
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('submitSpinner');
+    btn.disabled = true;
+    spinner.classList.add('show');
+
+    // Simulate AI shaping (replace with real API call in production)
+    setTimeout(() => {
+      const entry = {
+        id: 'woe_' + Date.now(),
+        name: nameVal,
+        segment: detectSegment(bladeVal),
+        blade: bladeVal,
+        quote: reaction,
+        date: new Date().toISOString().split('T')[0],
+        notes: '',
+        featured: false,
+        isPublic: consentMode !== 'none',
+        before: photoData.before,
+        after: photoData.after,
+        source: 'customer-capture'
+      };
+
+      // Write into the shared Wall localStorage
+      try {
+        const raw = localStorage.getItem(WOE_KEY);
+        const entries = raw ? JSON.parse(raw) : [];
+        entries.unshift(entry);
+        localStorage.setItem(WOE_KEY, JSON.stringify(entries));
+      } catch(e) {}
+
+      // Show thank you
+      document.getElementById('formCard').style.display = 'none';
+      const ty = document.getElementById('thankyou');
+      ty.classList.add('show');
+      ty.style.opacity = '0';
+      ty.style.animation = 'fadeUp 0.6s ease forwards';
+    }, 900);
+  }
+
+  function detectSegment(blade) {
+    const b = blade.toLowerCase();
+    if (/razor|clipper|barber|scissor/.test(b)) return 'Barber';
+    if (/mower|hedge|shear|lawn|landscap/.test(b)) return 'Landscaper';
+    if (/chef|kitchen|santoku|fillet|cleaver|bread|paring|boning|food processor/.test(b)) return 'Restaurant';
+    if (/axe|chisel|plane|plane blade|carving|woodwork/.test(b)) return 'Hobbyist';
+    return 'Homeowner';
+  }
+</script>
+</body>
+</html>
