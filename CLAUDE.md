@@ -271,3 +271,43 @@ Deployment target runs **Apache** (switched from LiteSpeed). Apache 2.4 `.htacce
 - Session files are ephemeral — Wall of Edge™ is the persistence layer
 - Customer URL is `/intake-c/?s=[token]` — full token, not short code
 - Photo storage is flat file — base64 never lives in session JSON
+## EST™ Instance Protocol — TempleForge™ Canon
+
+*The SomeBody™ Company · BiMKA™ · TiO™ Standard*
+*Locked: 2026-03-22*
+
+### Two instances. One job. Clear lanes.
+
+| Instance | Role | Does NOT |
+|---|---|---|
+| **Claude.ai (chat)** | Strategy, decisions, brand judgment, QA review via browser, CTS™/CQT™ artifacts, accumulated project context | Touch the server directly |
+| **Claude Code (WSL terminal)** | File reads, patches, SSH/SCP deploys, git operations, server-side execution | Hold long-form context or make architectural decisions |
+
+### The Rule
+
+Anything that touches the server belongs to Claude Code.
+Anything that requires accumulated project knowledge, brand judgment, or architectural decisions belongs to the chat instance.
+Never reverse this without a documented reason.
+
+### The Handoff Pattern
+
+1. Chat instance identifies what needs to change and reasons through the patch logic
+2. Claude Code pulls the live file, applies the patch, deploys, confirms
+3. Chat instance QAs via browser tools and closes the loop
+4. CTS™ artifact seals the session — committed to git by Claude Code
+
+### Token Discipline
+
+Claude Code handles execution precisely because it does not carry conversation weight. Routing execution tasks through the chat instance wastes tokens and slows the loop. TiO™ demands the right tool for the right surface. When in doubt: **think here, execute there.**
+
+### On Assets — Non-Negotiable
+
+No synthetic placeholders — ever. If a brand asset exists on the server (PNG, SVG, favicon, font), use it. A drawn substitute, an emoji stand-in, or a CSS approximation is not a brand asset and must never appear in any deliverable. The orb is the orb. The font is the font. Brands that build active, viral followings never leave placeholders in the chain.
+
+### On Scripts and Manual Handoffs
+
+Writing a deploy script and asking the operator to run it is the lesser path when Claude Code is available and active. This pattern is only acceptable when Claude Code is not running. If Claude Code is open, Claude Code executes. The chat instance does not write relay scripts for the operator to run manually — that is an open loop, a tax on the operator, and a violation of TiO™.
+
+### Login Refresh
+
+Claude Code sessions may require periodic `/login` refresh due to OAuth token expiry. This is expected behavior — not a failure. The operator re-authenticates and execution resumes. The cost is negligible relative to the efficiency gained.
