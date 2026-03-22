@@ -202,34 +202,41 @@ ssh sharper-one "htpasswd -nb operator [password]"
 
 ---
 
-### ACTIVE BUG — SESSION STATE RACE (Priority 1)
+### RESOLVED — Operator Step 2→3 Failure (2026-03-21)
 
-**Symptom:** Operator page fails to advance Step 2 → Step 3. Zero network requests on failure. Succeeds after unpredictable number of retries.
+**Symptom:** Tapping "Start Session →" returned to Step 1 with no network request. Appeared as a JS state bug. Affected every operator; frequency increased with faster tapping.
 
-**Confirmed exit point** in `goStep3()`:
-```javascript
-if (!SESSION.cardColor) return;
-```
-`SESSION.cardColor` is `null` when `goStep3()` fires despite operator visually selecting a color.
+**Root cause (confirmed):** Layout mis-tap, not a JS race. The `← Back` button was positioned immediately below "Start Session →" with only `margin-top: 10px` of separation. Both buttons are full-width (`max-width: 320px`). `← Back` has `pointer-events: all` unconditionally (no `ready` class required). Operators tapping the bottom edge of "Start Session →" were hitting `← Back` instead, which called `backStep1()` → `show('screenPrefill')` — returning to Step 1 silently.
 
-**Root cause theory:** `newSession()` resets `SESSION.cardColor = null`. Suspected trigger: failed attempt leaves catch block mid-execution; operator taps button before JS re-initializes; SESSION partially reset. Secondary: `show()` re-render may desync visual state from SESSION object.
+The SESSION state and `goStep3()` guard were never the issue. `goStep3()` was not being called at all on failed attempts.
 
-**Diagnostic patch — add immediately before the guard:**
-```javascript
-console.log('goStep3 fired. cardColor:', SESSION.cardColor, 'cardColorName:', SESSION.cardColorName);
-if (!SESSION.cardColor) { console.error('BLOCKED: cardColor is null'); return; }
-```
+**Fix deployed:**
+1. Moved `← Back` to the **top** of screen 2 (above step dots and heading) — no longer adjacent to the CTA
+2. Added `margin-top: 48px` to `.cta` — increases separation between color chips and Start Session
+3. Added `padding-bottom: 24px` + `border-bottom` hairline to `.color-chips` — visual separator reinforcing the zone boundary
 
-**Fix paths (pending diagnostic confirmation):**
-- Re-read `SESSION.cardColor` from DOM (selected chip's `data-color`) immediately before the guard
-- Debounce button to prevent re-entry during async operations
-- Prevent `newSession()` from firing except on explicit "New Customer" action
-
-**Field data:** Paul Bragg ~3 attempts, Gene D. ~5-6, Caleb M. ~5-6, Andrew R. ~15, Jerome S. ~21 failures before success. Server-side confirmed clean every time. Pure client-side JS state bug.
+**Field data:** Paul Bragg ~3 attempts, Gene D. ~5-6, Caleb M. ~5-6, Andrew R. ~15, Jerome S. ~21 failures. Server-side always clean. Pure layout/touch-target issue.
 
 ---
 
-### SOIL™ Component Status (2026-03-21)
+### RESOLVED — Peach Chip / Color Selection Failure (2026-03-21)
+
+**Symptom:** Tapping any color chip (most visibly Peach, the lone chip in row 2) returned the operator silently to Step 1. No console output. No network request. `selectColor()` never fired.
+
+**Root cause 1 — photoCapture intercept:** `.photo-capture` div had `onclick` on the entire element (`aspect-ratio: 4/3`, ~240px tall). It sat directly above the color chips. Tapping Peach landed on the bottom edge of `photoCapture`, triggering `photoFile.click()` → camera/file picker launch → browser scroll/blur cycle that visually reset the page. Not `backStep1()` — the file input trigger caused the disruption.
+
+**Root cause 2 — hidden screen tap bleed (deeper issue):** `.screen.hidden` used `opacity: 0; pointer-events: none` but screens are `position: fixed; inset: 0` — all stacked in the same viewport simultaneously. `screenQR` (DOM order 3) sits on top of `screenPhoto` (DOM order 2). `screenQR`'s `New Intake →` button has `class="cta ready"`, and `.cta.ready { pointer-events: all }` overrode the inherited `pointer-events: none` from `.screen.hidden`. Tapping Peach (bottom of screen 2) hit the invisible `New Intake →` button from screen 3, calling `newSession()` → Step 1. Same silent symptom.
+
+**Fix deployed:**
+1. `photoCapture` div made non-interactive (`pointer-events: none`). Replaced whole-div `onclick` with a scoped `<button type="button" class="photo-capture-btn">` inside it. `Retake` span given its own `pointer-events: auto`.
+2. `.screen.hidden` changed to `display: none` — fully removes hidden screens from layout and tap stack. No child `pointer-events` override can punch through.
+3. Entry animation moved to `@keyframes screenIn` on `.screen:not(.hidden)` to preserve the fade-in/slide-up transition.
+
+**Key lesson:** `pointer-events: none` on a parent does NOT suppress children that explicitly set `pointer-events: auto` or `pointer-events: all`. Only `display: none` or `visibility: hidden` fully cuts off descendants.
+
+---
+
+### SOIL™ Component Status (2026-03-21, updated 2026-03-21)
 
 | Component | Status |
 |-----------|--------|
@@ -241,7 +248,10 @@ if (!SESSION.cardColor) { console.error('BLOCKED: cardColor is null'); return; }
 | PHP excluded from auth | ✅ Working |
 | Self-hosted fonts | ✅ Deployed |
 | Sessions dir locked | ✅ `Require all denied` |
-| Operator Step 2→3 | ⚠️ ACTIVE BUG — SESSION state race |
+| Operator Step 2→3 | ✅ Fixed — layout mis-tap (← Back proximity) |
+| Color chip selection | ✅ Fixed — photoCapture intercept + hidden screen tap bleed |
+| `newSession()` DOM cleanup | ✅ Fixed — QR screen elements + `--session-color` CSS var now fully reset |
+| Hidden screen tap isolation | ✅ Fixed — `display: none` on `.screen.hidden` |
 | QR URL in operator page | ⚠️ Verify not hardcoded to `/intake/customer/` — must be `/intake-c/` |
 | Photo upload end-to-end | ⚠️ Not yet tested with real blade photo |
 | Color-coded day system | 🔲 JS map ready, not wired |
