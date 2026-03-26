@@ -767,7 +767,7 @@
     spinner.classList.add('show');
 
     // Simulate AI shaping (replace with real API call in production)
-    setTimeout(() => {
+    setTimeout(async () => {
       const entry = {
         id: 'woe_' + Date.now(),
         name: nameVal,
@@ -783,13 +783,22 @@
         source: 'customer-capture'
       };
 
-      // Write into the shared Wall localStorage
+      // POST to server — persistent, cross-device
       try {
-        const raw = localStorage.getItem(WOE_KEY);
-        const entries = raw ? JSON.parse(raw) : [];
-        entries.unshift(entry);
-        localStorage.setItem(WOE_KEY, JSON.stringify(entries));
-      } catch(e) {}
+        await fetch('/wall/submit.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entry)
+        });
+      } catch(e) {
+        // Server unreachable — fallback to localStorage so customer never sees failure
+        try {
+          const raw = localStorage.getItem(WOE_KEY);
+          const entries = raw ? JSON.parse(raw) : [];
+          entries.unshift(entry);
+          localStorage.setItem(WOE_KEY, JSON.stringify(entries));
+        } catch(e2) {}
+      }
 
       // Show thank you
       document.getElementById('formCard').style.display = 'none';
